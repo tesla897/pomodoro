@@ -1,0 +1,342 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.spotify-container {
+    flex: 0 0 0;
+    width: 0;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease, max-width 0.3s ease, width 0.3s ease, padding 0.3s ease;
+    visibility: hidden;
+}
+
+.spotify-container.active {
+    flex: 0 0 400px;
+    width: 400px;
+    max-width: 400px;
+    opacity: 1;
+    visibility: visible;
+    padding: 40px;
+}
+
+.spotify-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+#spotifyPlayer {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 12px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+.mode-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.mode-label {
+    color: #667eea;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.session-type {
+    color: #667eea;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.timer-display {
+    font-size: 5em;
+    font-weight: bold;
+    color: #333;
+    margin: 30px 0;
+    font-variant-numeric: tabular-nums;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.start-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.pause-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.reset-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.add-time-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.add-time-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-top: 30px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.session-count {
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.music-mode-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.music-mode-label {
+    color: #666;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.toggle-switch-small {
+    width: 45px;
+    height: 24px;
+}
+
+.toggle-switch-small .toggle-slider:before {
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+}
+
+.toggle-switch-small input:checked + .toggle-slider:before {
+    transform: translateX(21px);
+}
+
+
+@media (max-width: 968px) {
+    .wrapper {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .container {
+        max-width: 100%;
+    }
+
+    .spotify-container.active {
+        flex: 1;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    #spotifyPlayer {
+        height: 400px;
+    }
+}
+
+@media (max-width: 600px) {
+    .timer-display {
+        font-size: 3.5em;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .container {
+        padding: 30px 20px;
+    }
+
+    button {
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+
+    .mode-toggle-container {
+        gap: 10px;
+    }
+
+    .mode-label {
+        font-size: 0.9em;
+    }
+
+    .music-mode-label {
+        font-size: 0.8em;
+    }
+
+    .wrapper {
+        gap: 15px;
+    }
+
+    .spotify-container {
+        padding: 30px 20px;
+    }
+
+    .spotify-container.active {
+        padding: 30px 20px;
+    }
+
+    #spotifyPlayer {
+        height: 350px;
+    }
+
+    .spotify-container h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+}
+
