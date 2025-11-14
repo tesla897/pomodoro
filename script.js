@@ -35,6 +35,8 @@ class PomodoroTimer {
         this.musicModeToggle = document.getElementById('musicModeToggle');
         this.spotifyContainer = document.getElementById('spotifyContainer');
         this.spotifyPlayer = document.getElementById('spotifyPlayer');
+        this.defaultSpotifySrc = this.spotifyPlayer ? this.spotifyPlayer.getAttribute('src') : '';
+        this.isSpotifyLoaded = !!this.defaultSpotifySrc;
     }
 
     attachEventListeners() {
@@ -214,6 +216,10 @@ class PomodoroTimer {
     }
 
     updateMusicPlayer() {
+        if (!this.spotifyContainer || !this.spotifyPlayer) {
+            return;
+        }
+
         // Show Spotify player only if:
         // 1. Music mode is enabled
         // 2. We're in work mode (mode === 'work')
@@ -222,9 +228,24 @@ class PomodoroTimer {
         
         if (shouldShow) {
             this.spotifyContainer.classList.add('active');
+            if (!this.isSpotifyLoaded && this.defaultSpotifySrc) {
+                this.spotifyPlayer.src = this.defaultSpotifySrc;
+                this.isSpotifyLoaded = true;
+            }
         } else {
             this.spotifyContainer.classList.remove('active');
+            this.pauseSpotifyPlayback();
         }
+    }
+
+    pauseSpotifyPlayback() {
+        if (!this.spotifyPlayer || !this.isSpotifyLoaded) {
+            return;
+        }
+
+        // Loading a blank page stops playback while the player is hidden
+        this.spotifyPlayer.src = 'about:blank';
+        this.isSpotifyLoaded = false;
     }
 
     completeSession() {
