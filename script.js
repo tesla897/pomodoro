@@ -18,6 +18,7 @@ class PomodoroTimer {
         this.attachEventListeners();
         this.updateDisplay();
         this.updateModeDisplay();
+        this.updateMusicToggleDisplay();
     }
 
     initializeElements() {
@@ -29,10 +30,10 @@ class PomodoroTimer {
         this.addTimeBtn = document.getElementById('addTimeBtn');
         this.progressFill = document.getElementById('progressFill');
         this.sessionCount = document.getElementById('sessionCount');
-        this.modeToggle = document.getElementById('modeToggle');
-        this.currentModeLabel = document.getElementById('currentModeLabel');
-        this.switchToModeLabel = document.getElementById('switchToModeLabel');
-        this.musicModeToggle = document.getElementById('musicModeToggle');
+        this.modeToggleButton = document.getElementById('modeToggleButton');
+        this.modeToggleLabel = document.getElementById('modeToggleLabel');
+        this.musicToggleButton = document.getElementById('musicToggleButton');
+        this.musicToggleLabel = document.getElementById('musicToggleLabel');
         this.spotifyContainer = document.getElementById('spotifyContainer');
         this.spotifyPlayer = document.getElementById('spotifyPlayer');
         this.defaultSpotifySrc = this.spotifyPlayer ? this.spotifyPlayer.getAttribute('src') : '';
@@ -44,8 +45,12 @@ class PomodoroTimer {
         this.pauseBtn.addEventListener('click', () => this.pause());
         this.resetBtn.addEventListener('click', () => this.reset());
         this.addTimeBtn.addEventListener('click', () => this.addFiveMinutes());
-        this.modeToggle.addEventListener('change', () => this.switchMode());
-        this.musicModeToggle.addEventListener('change', () => this.toggleMusicMode());
+        if (this.modeToggleButton) {
+            this.modeToggleButton.addEventListener('click', () => this.switchMode());
+        }
+        if (this.musicToggleButton) {
+            this.musicToggleButton.addEventListener('click', () => this.toggleMusicMode());
+        }
     }
 
     switchMode() {
@@ -76,14 +81,20 @@ class PomodoroTimer {
     }
 
     updateModeDisplay() {
-        if (this.mode === 'work') {
-            this.currentModeLabel.textContent = 'Work Mode';
-            this.switchToModeLabel.textContent = 'Switch to Rest';
-            this.modeToggle.checked = false;
-        } else {
-            this.currentModeLabel.textContent = 'Rest Mode';
-            this.switchToModeLabel.textContent = 'Switch to Work';
-            this.modeToggle.checked = true;
+        const isWorkMode = this.mode === 'work';
+        const targetMode = isWorkMode ? 'rest' : 'work';
+
+        if (this.modeToggleLabel) {
+            this.modeToggleLabel.textContent = targetMode === 'work' ? 'Work Mode' : 'Rest Mode';
+        }
+
+        if (this.modeToggleButton) {
+            this.modeToggleButton.dataset.mode = targetMode;
+            this.modeToggleButton.setAttribute('aria-pressed', String(!isWorkMode));
+            this.modeToggleButton.setAttribute(
+                'aria-label',
+                targetMode === 'work' ? 'Switch to Work Mode' : 'Switch to Rest Mode'
+            );
         }
     }
 
@@ -212,8 +223,23 @@ class PomodoroTimer {
     }
 
     toggleMusicMode() {
-        this.musicMode = this.musicModeToggle.checked;
+        this.musicMode = !this.musicMode;
+        this.updateMusicToggleDisplay();
         this.updateMusicPlayer();
+    }
+
+    updateMusicToggleDisplay() {
+        if (!this.musicToggleButton || !this.musicToggleLabel) {
+            return;
+        }
+
+        this.musicToggleButton.dataset.active = String(this.musicMode);
+        this.musicToggleButton.setAttribute('aria-pressed', String(this.musicMode));
+        this.musicToggleButton.setAttribute(
+            'aria-label',
+            this.musicMode ? 'Disable Music Mode' : 'Enable Music Mode'
+        );
+        this.musicToggleLabel.textContent = this.musicMode ? 'Music On' : 'Music Off';
     }
 
     updateMusicPlayer() {

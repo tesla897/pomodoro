@@ -9,15 +9,31 @@
 <body>
     <div class="wrapper">
         <div class="container">
-            <h1>🍅 Pomodoro Timer</h1>
-            <div class="mode-toggle-container">
-                <span class="mode-label" id="currentModeLabel">Work Mode</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="modeToggle">
-                    <span class="toggle-slider"></span>
-                </label>
-                <span class="mode-label" id="switchToModeLabel">Switch to Rest</span>
+            <div class="top-action-panel">
+                <button
+                    id="modeToggleButton"
+                    class="mode-toggle-button"
+                    type="button"
+                    data-mode="work"
+                    aria-pressed="false"
+                    aria-label="Switch to Rest Mode"
+                >
+                    <span class="bulb-icon" aria-hidden="true"></span>
+                    <span class="mode-toggle-label" id="modeToggleLabel">Work Mode</span>
+                </button>
+                <button
+                    id="musicToggleButton"
+                    class="music-toggle-button"
+                    type="button"
+                    data-active="false"
+                    aria-pressed="false"
+                    aria-label="Enable Music Mode"
+                >
+                    <span class="music-icon" aria-hidden="true"></span>
+                    <span class="music-toggle-label" id="musicToggleLabel">Music Off</span>
+                </button>
             </div>
+            <h1>🍅 Pomodoro Timer</h1>
             <div class="session-type" id="sessionType">Work Session</div>
             <div class="timer-display" id="timerDisplay">25:00</div>
             <div class="controls">
@@ -32,13 +48,6 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="session-count" id="sessionCount">Completed sessions: 0</div>
-            <div class="music-mode-container">
-                <span class="music-mode-label">Music Mode</span>
-                <label class="toggle-switch toggle-switch-small">
-                    <input type="checkbox" id="musicModeToggle">
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
         </div>
         <div class="spotify-container" id="spotifyContainer">
             <h2>🎵 Music</h2>
