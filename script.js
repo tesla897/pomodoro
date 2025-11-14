@@ -298,31 +298,36 @@ class PomodoroTimer {
             this.completedSessions++;
         }
 
-        // Reset to current mode's default duration (don't auto-switch modes)
-        if (this.mode === 'work') {
-            this.currentTime = this.workDuration;
-            this.totalDuration = this.workDuration;
-            this.currentSession = 'work';
-        } else {
-            this.currentTime = this.shortBreakDuration;
-            this.totalDuration = this.shortBreakDuration;
-            this.currentSession = 'shortBreak';
-        }
-
-        this.updateDisplay();
-        this.updateMusicPlayer();
-        
-        // Show alert
+        // Show alert first
         const sessionNames = {
             'work': 'Work Session',
             'shortBreak': 'Short Break',
             'longBreak': 'Long Break'
         };
         alert(`Session complete! ${sessionNames[this.currentSession]} finished.`);
+        
+        // After alert is dismissed, automatically switch modes
+        if (this.currentSession === 'work') {
+            // Switch to rest mode after work session
+            this.mode = 'rest';
+            this.currentTime = this.shortBreakDuration;
+            this.totalDuration = this.shortBreakDuration;
+            this.currentSession = 'shortBreak';
+        } else {
+            // Switch to work mode after rest session
+            this.mode = 'work';
+            this.currentTime = this.workDuration;
+            this.totalDuration = this.workDuration;
+            this.currentSession = 'work';
+        }
+
+        this.updateModeDisplay();
+        this.updateDisplay();
+        this.updateMusicPlayer();
     }
 
     playNotification() {
-        // Create a simple beep sound using Web Audio API
+        // Create a more noticeable alarm sound using Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -330,11 +335,21 @@ class PomodoroTimer {
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
-        oscillator.frequency.value = 800;
+        // Create a more alarm-like sound with varying frequency
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.3);
         oscillator.type = 'sine';
 
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        // Create a pulsing effect for the alarm
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.05);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15);
+        gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.2);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+        gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.35);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.45);
 
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
@@ -345,4 +360,3 @@ class PomodoroTimer {
 document.addEventListener('DOMContentLoaded', () => {
     new PomodoroTimer();
 });
-
