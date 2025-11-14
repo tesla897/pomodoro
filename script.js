@@ -49,10 +49,9 @@ class PomodoroTimer {
     }
 
     switchMode() {
-        // Only allow mode switching if timer is not running
+        // If a session is running, stop it before switching modes
         if (this.isRunning) {
-            this.modeToggle.checked = !this.modeToggle.checked; // Revert toggle
-            return;
+            this.stopActiveTimerForModeSwitch();
         }
 
         // Toggle mode
@@ -68,6 +67,8 @@ class PomodoroTimer {
             this.totalDuration = this.shortBreakDuration;
             this.currentSession = 'shortBreak';
         }
+
+        this.hasActiveTimer = false;
         
         this.updateModeDisplay();
         this.updateDisplay();
@@ -246,6 +247,15 @@ class PomodoroTimer {
         // Loading a blank page stops playback while the player is hidden
         this.spotifyPlayer.src = 'about:blank';
         this.isSpotifyLoaded = false;
+    }
+
+    stopActiveTimerForModeSwitch() {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+        this.isRunning = false;
+        this.isPaused = false;
+        this.startBtn.style.display = 'inline-block';
+        this.pauseBtn.style.display = 'none';
     }
 
     completeSession() {
