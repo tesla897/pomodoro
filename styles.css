@@ -36,22 +36,22 @@ body {
 
 .top-action-panel {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 9px;
+    right: 9px;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+    z-index: 20;
 }
 
 /* --- Unify and balance mode/music toggle styles --- */
 /* Enforce min-width for both top-action-panel buttons to the same value */
 .mode-toggle-button, .music-toggle-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    min-width: 120px;
+    min-width: unset; /* let icons fit tight in the corner */
+    padding: 7px 7px;
+    width: 32px;
+    height: 32px;
     justify-content: center;
-    padding: 5px 13px;
     border: none;
     border-radius: 999px;
     background: #fff;
@@ -67,11 +67,10 @@ body {
     box-shadow: 0 1.5px 3px 0 rgba(60,61,65,0.06);
 }
 
-.bulb-icon, .music-icon {
+.bulb-icon, .music-icon-svg {
     width: 18px;
     height: 18px;
-    font-size: 1.1em;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -298,6 +297,68 @@ button:active {
     letter-spacing: 0.08em;
     font-size: 0.8em;
     color: #5b67a5;
+}
+
+.guide-bubble {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 38px rgba(36,40,52,0.18);
+    font-size: 1em;
+    color: #232323;
+    min-width: 180px;
+    max-width: 250px;
+    pointer-events: auto;
+    opacity: 1;
+    animation: guideFadeIn .22s cubic-bezier(.38,1.4,.51,.98);
+    position: fixed;
+    z-index: 2200;
+}
+.guide-bubble.is-above .guide-bubble-arrow {
+    top: 100%; left: 50%; transform: translateX(-50%) rotate(180deg);
+}
+.guide-bubble.is-below .guide-bubble-arrow {
+    bottom: 100%; left: 50%; transform: translateX(-50%) rotate(0deg);
+}
+.guide-bubble-arrow {
+    position: absolute;
+    width: 26px;
+    height: 15px;
+    z-index: 2;
+    pointer-events: none;
+    /* triangle shape for bubble arrow */
+    background: none;
+}
+.guide-bubble-arrow svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.guide-bubble-content {
+    padding: 14px 20px 6px 20px;
+    border-radius: 14px 14px 0 0;
+    background: #f8faff;
+    text-align: center;
+    font-size: 1.05em;
+    box-sizing: border-box;
+    position: relative;
+}
+.guide-bubble-next {
+    background: #667eea;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 26px;
+    margin-top: 5px;
+    font-weight: 600;
+    font-size: 1em;
+    letter-spacing: .03em;
+    cursor: pointer;
+    box-shadow: 0 1.5px 3px 0 rgba(60,61,65,.10);
+    transition: background .17s, box-shadow .17s;
+}
+.guide-bubble-next:hover {
+    background: #4858d6;
+    box-shadow: 0 2.5px 5px 0 rgba(60,61,65,0.12);
 }
 
 

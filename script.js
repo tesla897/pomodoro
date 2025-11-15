@@ -19,6 +19,9 @@ class PomodoroTimer {
         this.updateDisplay();
         this.updateModeDisplay();
         this.updateMusicToggleDisplay();
+        // --- Step-by-step Bubble Guided Mode for First-Time Users ---
+        this.checkAndShowGuide();
+
     }
 
     initializeElements() {
@@ -31,9 +34,10 @@ class PomodoroTimer {
         this.progressFill = document.getElementById('progressFill');
         this.sessionCount = document.getElementById('sessionCount');
         this.modeToggleButton = document.getElementById('modeToggleButton');
-        this.modeToggleLabel = document.getElementById('modeToggleLabel');
+        // Remove references to label elements now that only icons remain
+        this.modeToggleLabel = undefined;
+        this.musicToggleLabel = undefined;
         this.musicToggleButton = document.getElementById('musicToggleButton');
-        this.musicToggleLabel = document.getElementById('musicToggleLabel');
         this.spotifyContainer = document.getElementById('spotifyContainer');
         this.spotifyPlayer = document.getElementById('spotifyPlayer');
         this.defaultSpotifySrc = this.spotifyPlayer ? this.spotifyPlayer.getAttribute('src') : '';
@@ -83,11 +87,6 @@ class PomodoroTimer {
     updateModeDisplay() {
         const isWorkMode = this.mode === 'work';
         const targetMode = isWorkMode ? 'rest' : 'work';
-
-        if (this.modeToggleLabel) {
-            this.modeToggleLabel.textContent = targetMode === 'work' ? 'Work Mode' : 'Rest Mode';
-        }
-
         if (this.modeToggleButton) {
             this.modeToggleButton.dataset.mode = targetMode;
             this.modeToggleButton.setAttribute('aria-pressed', String(!isWorkMode));
@@ -229,18 +228,16 @@ class PomodoroTimer {
     }
 
     updateMusicToggleDisplay() {
-        if (!this.musicToggleButton || !this.musicToggleLabel) {
+        if (!this.musicToggleButton) {
             return;
         }
-
         this.musicToggleButton.dataset.active = String(this.musicMode);
         this.musicToggleButton.setAttribute('aria-pressed', String(this.musicMode));
         this.musicToggleButton.setAttribute(
             'aria-label',
             this.musicMode ? 'Disable Music Mode' : 'Enable Music Mode'
         );
-        this.musicToggleLabel.textContent = this.musicMode ? 'Music On' : 'Music Off';
-        // SVG color update happens via CSS, so nothing else is required
+        // No label to update.
     }
 
     updateMusicPlayer() {
@@ -354,6 +351,99 @@ class PomodoroTimer {
 
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
+    }
+
+    // --- Step-by-step Bubble Guided Mode for First-Time Users ---
+    checkAndShowGuide() {
+        if (!localStorage.getItem('pomodoro_first_time_guide_bubble_done')) {
+            this.startBubbleGuide();
+            localStorage.setItem('pomodoro_first_time_guide_bubble_done', 'true');
+        }
+    }
+
+    startBubbleGuide() {
+        // Sequence array with: element, message
+        this.guideSteps = [
+            {
+                el: this.modeToggleButton,
+                html: `<b>Work/Rest</b><br>This toggles focus and break mode.`
+            },
+            {
+                el: this.musicToggleButton,
+                html: `<b>Music Mode</b><br>Turns music on/off during work.`
+            },
+            {
+                el: this.startBtn,
+                html: `<b>Start</b><br>Starts your timer!`
+            },
+            {
+                el: this.resetBtn,
+                html: `<b>Reset</b><br>Resets your timer.`
+            }
+        ];
+        this.bubbleGuideStep = 0;
+        this.showGuideBubble();
+    }
+
+    showGuideBubble() {
+        // Remove existing bubble
+        if (this.guideBubbleNode && this.guideBubbleNode.parentNode) this.guideBubbleNode.remove();
+        const step = this.guideSteps[this.bubbleGuideStep];
+        if (!step || !step.el) return;
+        // Create bubble
+        const bubble = document.createElement('div');
+        bubble.className = 'guide-bubble';
+        bubble.innerHTML = `
+            <div class='guide-bubble-content'>${step.html}</div>
+            <button class='guide-bubble-next'>${(this.bubbleGuideStep < this.guideSteps.length-1) ? 'Next' : 'Finish'}</button>
+            <div class='guide-bubble-arrow'><svg width='26' height='15'><polygon points='13,15 0,0 26,0' style='fill:#fff;stroke:#e1e6f0;stroke-width:1.5;'/></svg></div>
+        `;
+        document.body.appendChild(bubble);
+        this.guideBubbleNode = bubble;
+        // Positioning with arrow direction
+        const rect = step.el.getBoundingClientRect();
+        const arrow = bubble.querySelector('.guide-bubble-arrow');
+        // Default: bubble below button
+        let showBelow = true;
+        let top = rect.bottom + 9;
+        let left = rect.left + rect.width/2 - 120;
+        // Special: if not enough space below, show above
+        if (top + 88 > window.innerHeight) {
+            showBelow = false;
+            top = rect.top - bubble.offsetHeight - 18;
+        }
+        // For bottom-row buttons always put above
+        if (step.el === this.startBtn || step.el === this.resetBtn) {
+            showBelow = false;
+            top = rect.top - 18 - 96;
+        }
+        // Clamp left
+        if (left < 8) left = 8;
+        if (left + 248 > window.innerWidth) left = window.innerWidth - 248;
+        bubble.style.top = top + 'px';
+        bubble.style.left = left + 'px';
+        bubble.classList.toggle('is-above', !showBelow);
+        bubble.classList.toggle('is-below', showBelow);
+        arrow.style.left = '50%';
+        arrow.style.transform = 'translateX(-50%)';
+        arrow.style.position = 'absolute';
+        // Place arrow appropriately
+        if (showBelow) {
+            arrow.style.top = '-15px';
+            arrow.style.bottom = '';
+        } else {
+            arrow.style.top = '';
+            arrow.style.bottom = '-15px';
+        }
+        // Next button
+        bubble.querySelector('.guide-bubble-next').onclick = () => {
+            this.bubbleGuideStep++;
+            if (this.bubbleGuideStep < this.guideSteps.length) {
+                this.showGuideBubble();
+            } else {
+                bubble.remove();
+            }
+        };
     }
 }
 
