@@ -43,33 +43,110 @@ body {
     align-items: center;
 }
 
-.mode-toggle-button,
-.music-toggle-button {
+/* --- Unify and balance mode/music toggle styles --- */
+/* Enforce min-width for both top-action-panel buttons to the same value */
+.mode-toggle-button, .music-toggle-button {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
+    gap: 5px;
+    min-width: 120px;
+    justify-content: center;
+    padding: 5px 13px;
     border: none;
     border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    font-size: 0.8em;
+    background: #fff;
+    color: #232323;
+    box-shadow: 0 2px 7px 0 rgba(60,61,65,0.08);
+    font-size: 0.85em;
     font-weight: 600;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
-    background: rgba(102, 126, 234, 0.12);
-    color: #333;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(.4,0,.2,1);
+}
+.mode-toggle-button[data-active="true"], .music-toggle-button[data-active="true"] {
+    background: #ececec;
+    box-shadow: 0 1.5px 3px 0 rgba(60,61,65,0.06);
 }
 
-.mode-toggle-button:hover,
-.music-toggle-button:hover {
-    transform: translateY(-2px);
-    background: rgba(102, 126, 234, 0.2);
+.bulb-icon, .music-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 1.1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.mode-toggle-button:focus-visible,
-.music-toggle-button:focus-visible {
-    outline: 3px solid rgba(102, 126, 234, 0.45);
-    outline-offset: 3px;
+.bulb-icon {
+    --bulb-color: #ffeb3b;
+    --bulb-glow: rgba(255, 235, 59, 0.25);
+    border-radius: 50% 50% 48% 48%;
+    background: var(--bulb-color);
+    position: relative;
+    box-shadow: 0 0 3.5px var(--bulb-glow);
+}
+
+.bulb-icon::before {
+    content: "";
+    position: absolute;
+    top: 3px; left: 4px; width: 8px; height: 6px;
+    border-radius: 50%; background: rgba(255,255,255,0.29); filter: blur(0.5px);
+}
+.bulb-icon::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; left: 4px; width: 8px; height: 4px;
+    border-radius: 2px; background: #bdbdbd;
+}
+.mode-toggle-button[data-mode="work"] .bulb-icon {
+    --bulb-color: #ffe066;
+    --bulb-glow: rgba(255, 224, 102, 0.53);
+}
+.mode-toggle-button[data-mode="rest"] .bulb-icon {
+    --bulb-color: #f3f4f6;
+    --bulb-glow: rgba(80,80,80,0.05);
+    box-shadow: inset 0 0 2.5px #bbb;
+}
+.mode-toggle-button[data-mode="rest"] .bulb-icon::before {
+    opacity: 0.17;
+}
+.mode-toggle-button[data-mode="rest"] .bulb-icon::after {
+    background: #bdbdbd;
+}
+
+/* SVG color logic for music icon */
+.music-toggle-button .music-icon-svg .music-note,
+.music-toggle-button .music-icon-svg .music-circle,
+.music-toggle-button .music-icon-svg .music-circle2 {
+    transition: stroke 0.23s, fill 0.23s;
+    stroke: #bababa;
+    fill: #bababa;
+}
+.music-toggle-button[data-active="true"] .music-icon-svg .music-note {
+    stroke: #222;
+}
+.music-toggle-button[data-active="true"] .music-icon-svg .music-circle,
+.music-toggle-button[data-active="true"] .music-icon-svg .music-circle2 {
+    fill: #222;
+}
+
+.music-toggle-button[data-active="false"] .music-icon-svg .music-note {
+    stroke: #bababa;
+}
+.music-toggle-button[data-active="false"] .music-icon-svg .music-circle,
+.music-toggle-button[data-active="false"] .music-icon-svg .music-circle2 {
+    fill: #bababa;
+}
+
+/* Remove old .music-icon rules to avoid confusion */
+.music-icon { display: none !important; }
+
+/* Remove original blue/grey backgrounds for pressed states for these buttons */
+.music-toggle-button[data-active="true"],
+.music-toggle-button[data-active="false"],
+.mode-toggle-button[data-active="true"],
+.mode-toggle-button[data-active="false"] {
+    background: inherit; /* use styles above */
+    box-shadow: inherit;
 }
 
 .spotify-container {
@@ -120,61 +197,6 @@ h1 {
     letter-spacing: 0.08em;
     font-size: 0.8em;
     color: #5b67a5;
-}
-
-.bulb-icon {
-    --bulb-color: #ffeb3b;
-    --bulb-glow: rgba(255, 235, 59, 0.55);
-    width: 24px;
-    height: 24px;
-    border-radius: 50% 50% 40% 40%;
-    background: var(--bulb-color);
-    position: relative;
-    box-shadow: 0 0 12px var(--bulb-glow);
-    transition: all 0.3s ease;
-}
-
-.bulb-icon::before {
-    content: "";
-    position: absolute;
-    top: 4px;
-    left: 6px;
-    width: 12px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.65);
-    filter: blur(1px);
-}
-
-.bulb-icon::after {
-    content: "";
-    position: absolute;
-    bottom: -6px;
-    left: 6px;
-    width: 12px;
-    height: 8px;
-    border-radius: 4px;
-    background: #cfd8dc;
-}
-
-.mode-toggle-button[data-mode="work"] .bulb-icon {
-    --bulb-color: #ffe066;
-    --bulb-glow: rgba(255, 224, 102, 0.75);
-    transform: translateY(-1px);
-}
-
-.mode-toggle-button[data-mode="rest"] .bulb-icon {
-    --bulb-color: #d7dde4;
-    --bulb-glow: rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08);
-}
-
-.mode-toggle-button[data-mode="rest"] .bulb-icon::before {
-    opacity: 0.25;
-}
-
-.mode-toggle-button[data-mode="rest"] .bulb-icon::after {
-    background: #b0bec5;
 }
 
 .session-type {
@@ -276,33 +298,6 @@ button:active {
     letter-spacing: 0.08em;
     font-size: 0.8em;
     color: #5b67a5;
-}
-
-.music-icon {
-    font-size: 1.1em;
-    color: #9e9e9e;
-    transition: color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.music-icon::before {
-    content: "♪";
-}
-
-.music-toggle-button[data-active="true"] .music-icon {
-    color: #111;
-}
-
-.music-toggle-button[data-active="true"] {
-    background: rgba(17, 17, 17, 0.08);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-}
-
-.music-toggle-button[data-active="false"] {
-    background: rgba(158, 158, 158, 0.12);
-    box-shadow: 0 12px 30px rgba(158, 158, 158, 0.15);
 }
 
 

@@ -240,6 +240,7 @@ class PomodoroTimer {
             this.musicMode ? 'Disable Music Mode' : 'Enable Music Mode'
         );
         this.musicToggleLabel.textContent = this.musicMode ? 'Music On' : 'Music Off';
+        // SVG color update happens via CSS, so nothing else is required
     }
 
     updateMusicPlayer() {
