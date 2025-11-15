@@ -355,10 +355,17 @@ button:active {
     cursor: pointer;
     box-shadow: 0 1.5px 3px 0 rgba(60,61,65,.10);
     transition: background .17s, box-shadow .17s;
+    display: inline-block;
+    float: right;
 }
 .guide-bubble-next:hover {
     background: #4858d6;
     box-shadow: 0 2.5px 5px 0 rgba(60,61,65,0.12);
+}
+.guide-bubble::after {
+    content: '';
+    display: table;
+    clear: both;
 }
 
 
